@@ -12,7 +12,7 @@ To use the GTFS to NGSI-LD Converter, you will need to have Python 3.7 or higher
 To run the converter, open the terminal or command prompt and navigate to the directory where the script is located. Then, type the following command and press enter:
 
 ```
-python gtfs_to_ngsi_ld.py
+python3 converter.py
 
 ```
 This will launch the GTFS to NGSI-LD converter window, where you can select which GTFS components to convert. The available options are:
