@@ -6,11 +6,11 @@ import tkinter as tk
 from tkinter import ttk
 from ttkthemes import ThemedTk
 import sys
+from collections import defaultdict
 
 
 
-
-version="0.02"
+version="0.04"
 context="https://raw.githubusercontent.com/SAMSGBLab/iotspaces-DataModels/main/transportation-models/context.json"
 
 
@@ -281,51 +281,43 @@ def begin_conversion():
     else:
 
         print("Converting shapes..")
-        with open('shapes.txt', 'r', encoding='utf-8-sig') as csvfile,open('Gtfsshapes.ngsild', 'w') as outfile:
+        with open('shapes.txt', 'r', encoding='utf-8-sig') as csvfile, open('Gtfsshapes.ngsild', 'w') as outfile:
             reader = csv.DictReader(csvfile)
-            outfile.write("[" + '\n')
-            entities = []
-            total_lines = sum(1 for row in reader)
-            csvfile.seek(0)
-            next(reader) # skip header
+            
+            # Create a dictionary to store line string for each shape_id
+            lines_dict = defaultdict(list)
 
-            current_line = 1
             for row in reader:
-                entity_id = f'urn:ngsi-ld:GtfsShape:Ioannina:SmartCitiesdomain:SmartCityBus:{row["shape_id"]}'
+                # Add the current point to the shape line
+                lines_dict[row["shape_id"]].append([
+                    float(row['shape_pt_lon']),
+                    float(row['shape_pt_lat'])
+                ])
+
+            entities = []
+            for shape_id, coordinates in lines_dict.items():
+                entity_id = f'urn:ngsi-ld:GtfsShape:Ioannina:SmartCitiesdomain:SmartCityBus:{shape_id}'
+
                 entity = {
                     'id': entity_id,
                     'type': 'GtfsShape',
                     'location': {
-                        'type': 'Property',
+                        'type': 'GeoProperty',
                         'value': {
-                            'type': 'Point',
-                            'coordinates': [
-                                float(row['shape_pt_lon']),
-                                float(row['shape_pt_lat'])
-                            ]
+                            'type': 'LineString',
+                            'coordinates': coordinates
                         }
-                    },
-                    'sequence': {
-                        'type': 'Property',
-                        'value': int(row['shape_pt_sequence'])
-                    },
-                    'distanceTraveled': {
-                        'type': 'Property',
-                        'value': float(row['shape_dist_traveled']) if row['shape_dist_traveled'] else 'null'
                     },
                     "@context": [
                         context,
                         "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
                     ]
                 }
-                outfile.write(json.dumps(entity, indent=2, ensure_ascii=False) + '\n')
-                percentage_done = current_line / total_lines * 100
-                if percentage_done!=100:
-                    outfile.write("," + '\n')
-                    
-                print(f"Processed {current_line} out of {total_lines} lines ({percentage_done:.2f}%)")
-                current_line += 1
-            outfile.write("]" + '\n')  
+
+                entities.append(entity)
+
+            # Dump the JSON array into the output file
+            json.dump(entities, outfile, indent=2, ensure_ascii=False)
 
         print("shapes done!")
     print("------------------------------------------------------------------------------------------------------------------------------------")
@@ -429,7 +421,7 @@ def begin_conversion():
                     ],
                     "name": {"type": "Property", "value": row["stop_name"]},
                     'location': {
-                        'type': 'Property',
+                        'type': 'GeoProperty',
                         'value': {
                             'type': 'Point',
                             'coordinates': [
