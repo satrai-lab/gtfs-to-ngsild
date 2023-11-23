@@ -10,8 +10,8 @@ from collections import defaultdict
 
 
 
-version="0.04"
-context="https://raw.githubusercontent.com/SAMSGBLab/iotspaces-DataModels/main/transportation-models/context.json"
+version="0.05"
+context="https://raw.githubusercontent.com/smart-data-models/dataModel.UrbanMobility/master/context.jsonld"
 
 
 
@@ -95,40 +95,30 @@ def begin_conversion():
                 entity = {
                     "id": "urn:ngsi-ld:GtfsAgency:Ioannina:SmartCitiesdomain:SmartCityBus:{}".format(row['agency_url']),
                     "type": "GtfsAgency",
-                    "agencyName": {
-                        "type": "Property",
-                        "value": row['agency_name']
-                    },
-                    "language": {
-                        "type": "Property",
-                        "value": row['agency_lang']
-                    },
-                    "page": {
-                        "type": "Property",
-                        "value": row['agency_url']
-                    },
-                    "phone": {
-                        "type": "Property",
-                        "value": row['agency_phone']
-                    },
-                    "timezone": {
-                        "type": "Property",
-                        "value": row['agency_timezone']
-                    },
                     "@context": [
                         context,
                         "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
                     ]
                 }
+                 # Adding attributes only if they exist
+                for attr in ['agency_name', 'agency_lang', 'agency_url', 'agency_phone', 'agency_timezone']:
+                    if attr in row:
+                        entity[attr] = {
+                            "type": "Property",
+                            "value": row[attr]
+                        }
+
                 outfile.write(json.dumps(entity, indent=2, ensure_ascii=False) + '\n')
-                percentage_done = current_line / total_lines * 100
-                if percentage_done!=100:
+
+                # Handling comma after the last element
+                if current_line != total_lines:
                     outfile.write("," + '\n')
-                    
+
+                percentage_done = current_line / total_lines * 100
                 print(f"Processed {current_line} out of {total_lines} lines ({percentage_done:.2f}%)")
                 current_line += 1
-            outfile.write("]" + '\n')     
-        print("agency done!")
+            outfile.write("]" + '\n')
+    print("agency done!")
 
     print("------------------------------------------------------------------------------------------------------------------------------------")
 
