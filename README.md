@@ -52,18 +52,14 @@ The entities are then stored in a separate file per type.
 ## Requirements
 To use this script, you will need Python 3.7 or higher installed on your computer. Additionally, the script uses the following libraries, which can be installed via pip:
 
-- csv
-- json
 - datetime
 - uuid
-- tkinter
-- ttk
 - ttkthemes
 
 To install the required libraries, run the following command in your terminal or command prompt:
 
 ```
-pip install csv json datetime uuid tkinter ttk ttkthemes
+pip install datetime uuid ttkthemes
 ```
 
 ## Disclaimer
