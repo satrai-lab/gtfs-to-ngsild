@@ -62,9 +62,9 @@ To install the required libraries, run the following command in your terminal or
 pip install datetime uuid ttkthemes
 ```
 
-## Disclaimer
-Please note that the GTFS to NGSI-LD converter is still in its early stages of development and is currently only capable of converting a limited subset of GTFS attributes to NGSI-LD format. We are actively working to expand the tool's capabilities and plan to include support for all GTFS attributes, as well as custom context and ID prefix selection in future releases.
 
+## Disclaimer
 While we have made every effort to ensure that the GTFS to NGSI-LD converter is accurate and reliable, there may be instances where errors or inaccuracies occur. We cannot be held responsible for any loss or damage that may arise from the use of this tool, and we recommend that you thoroughly test the converter on a small dataset before using it to convert a larger GTFS dataset.
 
-If you encounter any issues or have any suggestions for how we can improve the GTFS to NGSI-LD converter, please don't hesitate to reach out to us through the contact channels listed above. We appreciate your feedback and will do our best to incorporate it into future releases of the tool.
+This GTFS → NGSI-LD converter is no longer maintained and development has been abandoned. The tool remains experimental and only converts a limited subset of GTFS attributes to NGSI-LD.
+If you need additional functionality, please fork the repository and maintain your own version.
